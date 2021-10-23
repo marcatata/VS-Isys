@@ -15,6 +15,7 @@ typedef WeekFile =
 {
 	// JSON variables
 	var songs:Array<Dynamic>;
+	var hardModeSongs:Array<Dynamic>;
 	var weekCharacters:Array<String>;
 	var weekBackground:String;
 	var weekBefore:String;
@@ -33,6 +34,7 @@ class WeekData {
 	
 	// JSON variables
 	public var songs:Array<Dynamic>;
+	public var hardModeSongs:Array<Dynamic>;
 	public var weekCharacters:Array<String>;
 	public var weekBackground:String;
 	public var weekBefore:String;
@@ -46,6 +48,7 @@ class WeekData {
 	public static function createWeekFile():WeekFile {
 		var weekFile:WeekFile = {
 			songs: [["Bopeebo", "dad", [146, 113, 253]], ["Fresh", "dad", [146, 113, 253]], ["Dad Battle", "dad", [146, 113, 253]]],
+			hardModeSongs: [["Bopeebo", "dad", [146, 113, 253]], ["Fresh", "dad", [146, 113, 253]], ["Dad Battle", "dad", [146, 113, 253]]],
 			weekCharacters: ['dad', 'bf', 'gf'],
 			weekBackground: 'stage',
 			weekBefore: 'tutorial',
@@ -62,6 +65,14 @@ class WeekData {
 	// HELP: Is there any way to convert a WeekFile to WeekData without having to put all variables there manually? I'm kind of a noob in haxe lmao
 	public function new(weekFile:WeekFile) {
 		songs = weekFile.songs;
+		
+		if(weekFile.hardModeSongs == null){
+			hardModeSongs = weekFile.songs;
+		}
+		else{
+			hardModeSongs = weekFile.hardModeSongs;
+		}
+
 		weekCharacters = weekFile.weekCharacters;
 		weekBackground = weekFile.weekBackground;
 		weekBefore = weekFile.weekBefore;

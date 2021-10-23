@@ -148,7 +148,6 @@ class StoryMenuState extends MusicBeatState
 			sprDifficulty.antialiasing = ClientPrefs.globalAntialiasing;
 			sprDifficultyGroup.add(sprDifficulty);
 		}
-		changeDifficulty();
 
 		difficultySelectors.add(sprDifficultyGroup);
 
@@ -178,6 +177,8 @@ class StoryMenuState extends MusicBeatState
 		add(txtWeekTitle);
 
 		changeWeek();
+		
+		changeDifficulty();
 
 		super.create();
 	}
@@ -275,7 +276,15 @@ class StoryMenuState extends MusicBeatState
 
 			// We can't use Dynamic Array .copy() because that crashes HTML5, here's a workaround.
 			var songArray:Array<String> = [];
-			var leWeek:Array<Dynamic> = WeekData.weeksLoaded.get(WeekData.weeksList[curWeek]).songs;
+			var leWeek:Array<Dynamic>;
+
+			if(curDifficulty > 1) {
+				leWeek = WeekData.weeksLoaded.get(WeekData.weeksList[curWeek]).hardModeSongs;
+			}
+			else {
+				leWeek = WeekData.weeksLoaded.get(WeekData.weeksList[curWeek]).songs;
+			}
+			
 			for (i in 0...leWeek.length) {
 				songArray.push(leWeek[i][0]);
 			}
@@ -326,6 +335,8 @@ class StoryMenuState extends MusicBeatState
 		#if !switch
 		intendedScore = Highscore.getWeekScore(WeekData.weeksList[curWeek], curDifficulty);
 		#end
+		
+		updateText();
 	}
 
 	var lerpScore:Int = 0;
@@ -383,8 +394,17 @@ class StoryMenuState extends MusicBeatState
 
 		var leWeek:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[curWeek]);
 		var stringThing:Array<String> = [];
-		for (i in 0...leWeek.songs.length) {
-			stringThing.push(leWeek.songs[i][0]);
+		
+		
+		if (curDifficulty > 1) {
+			for (i in 0...leWeek.hardModeSongs.length) {
+				stringThing.push(leWeek.hardModeSongs[i][0]);
+			}
+		}
+		else {
+			for (i in 0...leWeek.songs.length) {
+				stringThing.push(leWeek.songs[i][0]);
+			}
 		}
 
 		txtTracklist.text = '';
