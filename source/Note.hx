@@ -62,6 +62,8 @@ class Note extends FlxSprite
 	public var hitHealth:Float = 0.023;
 	public var missHealth:Float = 0.0475;
 
+	public var useSpecialSpeed:Bool = false;
+
 	public var texture(default, set):String = null;
 
 	public var noAnimation:Bool = false;

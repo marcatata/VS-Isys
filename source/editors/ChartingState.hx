@@ -227,6 +227,7 @@ class ChartingState extends MusicBeatState
 				player2: 'dad',
 				player3: 'gf',
 				speed: 1,
+				specialNoteSpeed: 3,
 				stage: 'stage',
 				validScore: false
 			};
@@ -2131,6 +2132,7 @@ class ChartingState extends MusicBeatState
 			bpm: _song.bpm,
 			needsVoices: _song.needsVoices,
 			speed: _song.speed,
+			specialNoteSpeed: _song.specialNoteSpeed,
 			arrowSkin: _song.arrowSkin,
 			splashSkin: _song.splashSkin,
 

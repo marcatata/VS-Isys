@@ -246,12 +246,15 @@ class PlayState extends MusicBeatState
 	// Lua shit
 	private var luaDebugGroup:FlxTypedGroup<DebugLuaText>;
 	public var introSoundsSuffix:String = '';
+	public var dynamicSpeed:Float =  0;
+	public var dontUpdateNoteLua:Bool = false;
 
 	override public function create()
 	{
 		#if MODS_ALLOWED
 		Paths.destroyLoadedImages(resetSpriteCache);
 		#end
+		dynamicSpeed = SONG.specialNoteSpeed;
 		resetSpriteCache = false;
 
 		if (FlxG.sound.music != null)
@@ -1440,6 +1443,8 @@ class PlayState extends MusicBeatState
 	{
 		startingSong = false;
 
+		dynamicSpeed = SONG.specialNoteSpeed;
+
 		previousFrameTime = FlxG.game.ticks;
 		lastReportedPlayheadPosition = 0;
 
@@ -1833,6 +1838,9 @@ class PlayState extends MusicBeatState
 
 		callOnLuas('onUpdate', [elapsed]);
 
+		// updates on static properties
+
+
 		switch (curStage)
 		{
 			case 'schoolEvil':
@@ -2131,6 +2139,10 @@ class PlayState extends MusicBeatState
 			var fakeCrochet:Float = (60 / SONG.bpm) * 1000;
 			notes.forEachAlive(function(daNote:Note)
 			{
+				if(daNote.useSpecialSpeed)
+				{
+					callOnLuas('noteActivate', [daNote.noteType]);
+				}
 				if(!daNote.mustPress && ClientPrefs.middleScroll)
 				{
 					daNote.active = true;
@@ -2181,12 +2193,21 @@ class PlayState extends MusicBeatState
 				}
 				if(daNote.copyY) {
 					if (ClientPrefs.downScroll) {
-						daNote.y = (strumY + 0.45 * (Conductor.songPosition - daNote.strumTime) * roundedSpeed);
+						if(daNote.useSpecialSpeed)
+						{
+							daNote.y = (strumY + 0.45 * (Conductor.songPosition - daNote.strumTime) * dynamicSpeed);
+						}
+						else
+						{
+							daNote.y = (strumY + 0.45 * (Conductor.songPosition - daNote.strumTime) * roundedSpeed);
+						}
+						
 						if (daNote.isSustainNote) {
 							//Jesus fuck this took me so much mother fucking time AAAAAAAAAA
 							if (daNote.animation.curAnim.name.endsWith('end')) {
 								daNote.y += 10.5 * (fakeCrochet / 400) * 1.5 * roundedSpeed + (46 * (roundedSpeed - 1));
 								daNote.y -= 46 * (1 - (fakeCrochet / 600)) * roundedSpeed;
+								
 								if(PlayState.isPixelStage) {
 									daNote.y += 8;
 								} else {
@@ -2210,7 +2231,16 @@ class PlayState extends MusicBeatState
 							}
 						}
 					} else {
-						daNote.y = (strumY - 0.45 * (Conductor.songPosition - daNote.strumTime) * roundedSpeed);
+						
+						if(daNote.useSpecialSpeed)
+						{
+							daNote.y = (strumY - 0.45 * (Conductor.songPosition - daNote.strumTime) * dynamicSpeed);
+						}
+						else
+						{
+							daNote.y = (strumY - 0.45 * (Conductor.songPosition - daNote.strumTime) * roundedSpeed);
+						}
+						
 
 						if(daNote.mustPress || !daNote.ignoreNote)
 						{
